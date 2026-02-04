@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q3 2025 Events Impact Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bodh: #FF6B35;
+            --ignite: #004E89;
+            --volunteer: #1A936F;
+            --dark: #1A1A2E;
+            --light: #F7F7F2;
+            --accent: #FFD23F;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 40px;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,107,53,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero h1 {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 5em;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--bodh), var(--ignite), var(--volunteer));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+        }
+
+        .hero .subtitle {
+            font-size: 1.8em;
+            color: var(--light);
+            opacity: 0.8;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .hero .period {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid var(--accent);
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1.2em;
+            letter-spacing: 3px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--bodh), var(--ignite), var(--volunteer));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .stat-card .icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .stat-card .value {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 3.5em;
+            color: var(--accent);
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .stat-card .label {
+            font-size: 1.1em;
+            color: var(--light);
+            opacity: 0.7;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            margin-bottom: 80px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 30px;
+            padding: 60px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 3em;
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .section-title .emoji {
+            font-size: 1.3em;
+            filter: drop-shadow(0 0 20px rgba(255,210,63,0.5));
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 18px 40px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.03);
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--light);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .tab-btn.active {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .tab-btn.bodh.active {
+            background: var(--bodh);
+            border-color: var(--bodh);
+            color: white;
+        }
+
+        .tab-btn.ignite.active {
+            background: var(--ignite);
+            border-color: var(--ignite);
+            color: white;
+        }
+
+        .tab-btn.volunteer.active {
+            background: var(--volunteer);
+            border-color: var(--volunteer);
+            color: white;
+        }
+
+        .tab-btn.overall.active {
+            background: linear-gradient(135deg, var(--bodh), var(--ignite), var(--volunteer));
+            border: none;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .metric-box {
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 4px solid var(--accent);
+            transition: all 0.3s;
+        }
+
+        .metric-box:hover {
+            background: rgba(0,0,0,0.5);
+            transform: translateX(5px);
+        }
+
+        .metric-box .metric-label {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .metric-box .metric-value {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 2.5em;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .metric-box .metric-sublabel {
+            font-size: 0.9em;
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 450px;
+            margin: 50px 0;
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 20px;
+        }
+
+        .map-section {
+            margin: 80px 0;
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            max-width: 1400px;
+            margin: 40px auto;
+            background: linear-gradient(135deg, rgba(0,30,60,0.4), rgba(0,20,40,0.4));
+            padding: 60px 40px;
+            border-radius: 30px;
+            border: 2px solid rgba(255,255,255,0.15);
+        }
+
+        #indiaMapSVG {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
+        }
+
+        .state-path {
+            fill: rgba(100,150,200,0.15);
+            stroke: rgba(255,210,63,0.8);
+            stroke-width: 2;
+            transition: all 0.3s;
+        }
+
+        .state-path:hover {
+            fill: rgba(100,150,200,0.3);
+            stroke: rgba(255,210,63,1);
+            stroke-width: 3;
+        }
+
+        .city-marker {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .city-marker circle {
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+
+        .city-marker:hover circle {
+            r: 8;
+            filter: drop-shadow(0 0 15px currentColor);
+        }
+
+        .city-marker text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            fill: white;
+            text-anchor: middle;
+            pointer-events: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8);
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.95);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            border: 2px solid var(--accent);
+            backdrop-filter: blur(10px);
+            max-width: 280px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .legend-item span {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3em;
+            }
+            
+            .section {
+                padding: 30px;
+            }
+            
+            .section-title {
+                font-size: 2em;
+            }
+
+            .city-marker text {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>Impact Report</h1>
+            <div class="subtitle">Quarterly Events Analysis & Geographic Reach</div>
+            <div class="period">OCT — DEC 2025 / Q3</div>
+        </div>
+
+        <!-- Overall Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">🎯</div>
+                <div class="value">85</div>
+                <div class="label">Total Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">👥</div>
+                <div class="value">13,851</div>
+                <div class="label">Beneficiaries</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📍</div>
+                <div class="value">26</div>
+                <div class="label">Branches</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🗺️</div>
+                <div class="value">8</div>
+                <div class="label">States</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📈</div>
+                <div class="value">163</div>
+                <div class="label">Avg per Event</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🤝</div>
+                <div class="value">8.2%</div>
+                <div class="label">Collaborations</div>
+            </div>
+        </div>
+
+        <!-- Category Analysis Section -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="emoji">📂</span>
+                Category Analysis
+            </h2>
+            
+            <div class="category-tabs">
+                <button class="tab-btn overall active" onclick="switchTab('overall')">Overall</button>
+                <button class="tab-btn bodh" onclick="switchTab('bodh')">BODH</button>
+                <button class="tab-btn ignite" onclick="switchTab('ignite')">Ignite</button>
+                <button class="tab-btn volunteer" onclick="switchTab('volunteer')">Volunteer Motivation</button>
+            </div>
+
+            <!-- Overall Tab -->
+            <div id="overall-content" class="tab-content active">
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="metric-label">Total Events</div>
+                        <div class="metric-value">85</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Total Beneficiaries</div>
+                        <div class="metric-value">13,851</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">States Covered</div>
+                        <div class="metric-value">8</div>
+                        <div class="metric-sublabel">Bihar, Rajasthan, Delhi, UP, Maharashtra, Haryana, Uttarakhand, Jharkhand</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Highest Single Event</div>
+                        <div class="metric-value">4,000</div>
+                        <div class="metric-sublabel">Sankalp — Patna</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Max Events by Branch</div>
+                        <div class="metric-value">17</div>
+                        <div class="metric-sublabel">Jodhpur</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Max Events by State</div>
+                        <div class="metric-value">27</div>
+                        <div class="metric-sublabel">Rajasthan</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="overallChart"></canvas>
+                </div>
+            </div>
+
+            <!-- BODH Tab -->
+            <div id="bodh-content" class="tab-content">
+                <div class="metrics-grid">
+                    <div class="metric-box" style="border-left-color: var(--bodh);">
+                        <div class="metric-label">Total Events</div>
+                        <div class="metric-value">34</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--bodh);">
+                        <div class="metric-label">Total Beneficiaries</div>
+                        <div class="metric-value">11,785</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--bodh);">
+                        <div class="metric-label">Avg Beneficiaries</div>
+                        <div class="metric-value">347</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--bodh);">
+                        <div class="metric-label">States Covered</div>
+                        <div class="metric-value">5</div>
+                        <div class="metric-sublabel">Bihar, Rajasthan, UP, Maharashtra, Uttarakhand</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--bodh);">
+                        <div class="metric-label">Max Events by Branch</div>
+                        <div class="metric-value">13</div>
+                        <div class="metric-sublabel">Jodhpur</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--bodh);">
+                        <div class="metric-label">Collaboration Rate</div>
+                        <div class="metric-value">5.9%</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="bodhChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Ignite Tab -->
+            <div id="ignite-content" class="tab-content">
+                <div class="metrics-grid">
+                    <div class="metric-box" style="border-left-color: var(--ignite);">
+                        <div class="metric-label">Total Events</div>
+                        <div class="metric-value">38</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--ignite);">
+                        <div class="metric-label">Total Beneficiaries</div>
+                        <div class="metric-value">1,141</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--ignite);">
+                        <div class="metric-label">Avg Beneficiaries</div>
+                        <div class="metric-value">30</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--ignite);">
+                        <div class="metric-label">States Covered</div>
+                        <div class="metric-value">7</div>
+                        <div class="metric-sublabel">Bihar, Rajasthan, Delhi, UP, Maharashtra, Haryana, Jharkhand</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--ignite);">
+                        <div class="metric-label">Max Events by Branch</div>
+                        <div class="metric-value">3</div>
+                        <div class="metric-sublabel">Rohini Sec-15, Patna</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--ignite);">
+                        <div class="metric-label">Collaboration Rate</div>
+                        <div class="metric-value">13.2%</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="igniteChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Volunteer Motivation Tab -->
+            <div id="volunteer-content" class="tab-content">
+                <div class="metrics-grid">
+                    <div class="metric-box" style="border-left-color: var(--volunteer);">
+                        <div class="metric-label">Total Events</div>
+                        <div class="metric-value">13</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--volunteer);">
+                        <div class="metric-label">Total Beneficiaries</div>
+                        <div class="metric-value">925</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--volunteer);">
+                        <div class="metric-label">Avg Beneficiaries</div>
+                        <div class="metric-value">71</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--volunteer);">
+                        <div class="metric-label">States Covered</div>
+                        <div class="metric-value">4</div>
+                        <div class="metric-sublabel">Bihar, Rajasthan, UP, Maharashtra</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--volunteer);">
+                        <div class="metric-label">Max Events by Branch</div>
+                        <div class="metric-value">2</div>
+                        <div class="metric-sublabel">Araria, Jodhpur, Patna</div>
+                    </div>
+                    <div class="metric-box" style="border-left-color: var(--volunteer);">
+                        <div class="metric-label">Collaboration Rate</div>
+                        <div class="metric-value">0%</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="volunteerChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Geographic Distribution Map -->
+        <div class="section map-section">
+            <h2 class="section-title">
+                <span class="emoji">🗺️</span>
+                Geographic Distribution
+            </h2>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--accent);"></div>
+                    <span>Branch Locations</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(255,210,63,0.3); border-color: var(--accent);"></div>
+                    <span>State Boundaries</span>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <svg id="indiaMapSVG" viewBox="0 0 1000 1100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- India Map will be inserted here -->
+                </svg>
+            </div>
+            <div id="mapTooltip" class="tooltip"></div>
+        </div>
+
+        <div class="footer">
+            <p>Generated on February 4, 2026 | Q3 2025 Events Report (Oct — Dec 2025)</p>
+            <p style="margin-top: 15px; opacity: 0.6;">© 2025 Youth & Professional Social Service | All Rights Reserved</p>
+        </div>
+    </div>
+
+    <script>
+        // Branch coordinates on India map
+        const branchCoordinates = {
+            // Bihar
+            "Patna": {x: 660, y: 370, state: "Bihar"},
+            "Darbhanga": {x: 680, y: 360, state: "Bihar"},
+            "Saharsa": {x: 700, y: 355, state: "Bihar"},
+            "Araria": {x: 715, y: 350, state: "Bihar"},
+            "Bhagalpur": {x: 690, y: 380, state: "Bihar"},
+            "Gaya": {x: 650, y: 385, state: "Bihar"},
+            
+            // Rajasthan
+            "Jodhpur": {x: 350, y: 360, state: "Rajasthan"},
+            "Jaipur": {x: 400, y: 350, state: "Rajasthan"},
+            
+            // Delhi & NCR
+            "Noida": {x: 445, y: 315, state: "Uttar Pradesh"},
+            "Ghaziabad": {x: 448, y: 312, state: "Uttar Pradesh"},
+            "Rohini Sec-15": {x: 440, y: 310, state: "Delhi"},
+            "Nehru Place": {x: 442, y: 313, state: "Delhi"},
+            "Karkardooma": {x: 444, y: 311, state: "Delhi"},
+            
+            // Uttar Pradesh
+            "Agra": {x: 435, y: 345, state: "Uttar Pradesh"},
+            "Lucknow": {x: 520, y: 355, state: "Uttar Pradesh"},
+            "Varanasi": {x: 595, y: 375, state: "Uttar Pradesh"},
+            "Aligarh": {x: 440, y: 330, state: "Uttar Pradesh"},
+            "Meerut": {x: 445, y: 300, state: "Uttar Pradesh"},
+            
+            // Haryana
+            "Gurugram": {x: 435, y: 315, state: "Haryana"},
+            "Rewari": {x: 425, y: 325, state: "Haryana"},
+            
+            // Uttarakhand
+            "Dehradun+Pauri": {x: 445, y: 280, state: "Uttarakhand"},
+            
+            // Maharashtra
+            "Chakan": {x: 370, y: 530, state: "Maharashtra"},
+            "Pathardi": {x: 390, y: 520, state: "Maharashtra"},
+            "Nagpur": {x: 470, y: 470, state: "Maharashtra"},
+            "Amravati": {x: 445, y: 465, state: "Maharashtra"},
+            
+            // Jharkhand
+            "Jharkhand": {x: 660, y: 410, state: "Jharkhand"}
+        };
+
+        // Branch data
+        const branchData = {
+            "Patna": 4810, "Jodhpur": 4685, "Jaipur": 2060, "Saharsa": 455, "Darbhanga": 358,
+            "Chakan": 190, "Agra": 168, "Lucknow": 120, "Dehradun+Pauri": 115, "Pathardi": 107,
+            "Ghaziabad": 103, "Bhagalpur": 100, "Araria": 95, "Karkardooma": 95, "Noida": 70,
+            "Rohini Sec-15": 57, "Gurugram": 35, "Nehru Place": 35, "Aligarh": 35, "Amravati": 27,
+            "Rewari": 23, "Meerut": 15, "Varanasi": 15, "Nagpur": 10, "Gaya": 8, "Jharkhand": 60
+        };
+
+        // India map state paths (more detailed and visible)
+        const indiaMapPaths = [
+            // Rajasthan
+            {d: "M 280 250 L 350 240 L 390 250 L 420 280 L 430 320 L 430 370 L 420 410 L 390 450 L 350 470 L 310 475 L 270 465 L 240 440 L 220 400 L 215 350 L 230 300 L 250 270 Z", name: "Rajasthan"},
+            
+            // Uttar Pradesh  
+            {d: "M 420 280 L 470 270 L 530 280 L 580 300 L 620 330 L 630 360 L 625 390 L 600 415 L 560 430 L 510 435 L 470 425 L 440 405 L 425 375 L 420 340 L 420 310 Z", name: "Uttar Pradesh"},
+            
+            // Bihar
+            {d: "M 620 330 L 660 320 L 710 325 L 745 340 L 760 370 L 755 405 L 735 430 L 700 440 L 660 435 L 630 420 L 615 390 L 615 360 Z", name: "Bihar"},
+            
+            // Jharkhand
+            {d: "M 630 420 L 675 430 L 715 440 L 740 460 L 745 490 L 730 515 L 695 530 L 655 525 L 620 505 L 605 475 L 605 445 Z", name: "Jharkhand"},
+            
+            // Maharashtra
+            {d: "M 270 465 L 320 475 L 380 485 L 440 495 L 490 510 L 520 540 L 515 580 L 490 620 L 450 650 L 400 665 L 350 660 L 300 640 L 260 610 L 240 570 L 240 530 L 250 490 Z", name: "Maharashtra"},
+            
+            // Delhi (small region)
+            {d: "M 435 305 L 450 305 L 450 320 L 435 320 Z", name: "Delhi"},
+            
+            // Haryana
+            {d: "M 400 260 L 455 250 L 480 265 L 485 290 L 475 320 L 455 340 L 425 345 L 395 335 L 385 310 L 390 280 Z", name: "Haryana"},
+            
+            // Uttarakhand
+            {d: "M 420 230 L 470 220 L 495 235 L 500 260 L 485 285 L 460 295 L 435 290 L 420 270 Z", name: "Uttarakhand"}
+        ];
+
+        // Draw India map with city markers
+        function drawIndiaMap() {
+            const svg = document.getElementById('indiaMapSVG');
+            
+            // Add state paths
+            indiaMapPaths.forEach(state => {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', state.d);
+                path.classList.add('state-path');
+                path.setAttribute('data-state', state.name);
+                svg.appendChild(path);
+            });
+            
+            // Add city markers
+            for (const [branch, beneficiaries] of Object.entries(branchData)) {
+                if (branchCoordinates[branch]) {
+                    const coords = branchCoordinates[branch];
+                    
+                    const marker = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    marker.classList.add('city-marker');
+                    
+                    // Add circle marker
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', coords.x);
+                    circle.setAttribute('cy', coords.y);
+                    circle.setAttribute('r', 6);
+                    circle.setAttribute('fill', '#FFD23F');
+                    circle.setAttribute('stroke', '#FFF');
+                    circle.setAttribute('stroke-width', 2);
+                    marker.appendChild(circle);
+                    
+                    // Add city name label
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', coords.x);
+                    text.setAttribute('y', coords.y - 12);
+                    text.textContent = branch;
+                    marker.appendChild(text);
+                    
+                    // Add tooltip events
+                    marker.addEventListener('mouseover', (e) => showTooltip(e, branch, beneficiaries, coords.state));
+                    marker.addEventListener('mouseout', hideTooltip);
+                    marker.addEventListener('mousemove', (e) => moveTooltip(e));
+                    
+                    svg.appendChild(marker);
+                }
+            }
+        }
+
+        function showTooltip(e, branch, beneficiaries, state) {
+            const tooltip = document.getElementById('mapTooltip');
+            tooltip.innerHTML = `
+                <strong style="font-size: 1.1em; color: #FFD23F;">${branch}</strong><br>
+                <span style="opacity: 0.8;">State: ${state}</span><br>
+                <span style="color: #FFD23F; font-weight: bold;">Total Beneficiaries: ${beneficiaries.toLocaleString()}</span>
+            `;
+            tooltip.style.opacity = '1';
+        }
+
+        function moveTooltip(e) {
+            const tooltip = document.getElementById('mapTooltip');
+            tooltip.style.left = e.pageX + 15 + 'px';
+            tooltip.style.top = e.pageY + 15 + 'px';
+        }
+
+        function hideTooltip() {
+            document.getElementById('mapTooltip').style.opacity = '0';
+        }
+
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`.tab-btn.${tab}`).classList.add('active');
+            document.getElementById(`${tab}-content`).classList.add('active');
+        }
+
+        // Create charts
+        function createCharts() {
+            const chartConfig = {
+                type: 'bar',
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#F7F7F2',
+                                font: {
+                                    family: 'JetBrains Mono',
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255,255,255,0.1)'
+                            },
+                            ticks: {
+                                color: '#F7F7F2',
+                                font: {
+                                    family: 'JetBrains Mono'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255,255,255,0.1)'
+                            },
+                            ticks: {
+                                color: '#F7F7F2',
+                                font: {
+                                    family: 'JetBrains Mono'
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Overall Chart
+            new Chart(document.getElementById('overallChart'), {
+                ...chartConfig,
+                data: {
+                    labels: ['BODH', 'Ignite', 'Volunteer Motivation'],
+                    datasets: [{
+                        label: 'Events',
+                        data: [34, 38, 13],
+                        backgroundColor: ['rgba(255,107,53,0.7)', 'rgba(0,78,137,0.7)', 'rgba(26,147,111,0.7)'],
+                        borderColor: ['#FF6B35', '#004E89', '#1A936F'],
+                        borderWidth: 2
+                    }, {
+                        label: 'Beneficiaries (in hundreds)',
+                        data: [118, 11, 9],
+                        backgroundColor: ['rgba(255,107,53,0.4)', 'rgba(0,78,137,0.4)', 'rgba(26,147,111,0.4)'],
+                        borderColor: ['#FF6B35', '#004E89', '#1A936F'],
+                        borderWidth: 2
+                    }]
+                }
+            });
+
+            // BODH Chart
+            new Chart(document.getElementById('bodhChart'), {
+                ...chartConfig,
+                data: {
+                    labels: ['Patna', 'Jodhpur', 'Jaipur', 'Saharsa', 'Darbhanga', 'Dehradun+Pauri', 'Chakan', 'Agra', 'Noida', 'Ghaziabad'],
+                    datasets: [{
+                        label: 'Beneficiaries',
+                        data: [4600, 4400, 1930, 250, 245, 115, 105, 100, 25, 15],
+                        backgroundColor: 'rgba(255,107,53,0.7)',
+                        borderColor: '#FF6B35',
+                        borderWidth: 2
+                    }]
+                }
+            });
+
+            // Ignite Chart
+            new Chart(document.getElementById('igniteChart'), {
+                ...chartConfig,
+                data: {
+                    labels: ['Patna', 'Jodhpur', 'Bhagalpur', 'Karkardooma', 'Ghaziabad', 'Darbhanga', 'Saharsa', 'Jharkhand', 'Rohini', 'Pathardi'],
+                    datasets: [{
+                        label: 'Beneficiaries',
+                        data: [120, 100, 100, 95, 88, 83, 80, 60, 57, 47],
+                        backgroundColor: 'rgba(0,78,137,0.7)',
+                        borderColor: '#004E89',
+                        borderWidth: 2
+                    }]
+                }
+            });
+
+            // Volunteer Chart
+            new Chart(document.getElementById('volunteerChart'), {
+                ...chartConfig,
+                data: {
+                    labels: ['Jodhpur', 'Jaipur', 'Saharsa', 'Lucknow', 'Araria', 'Patna', 'Chakan', 'Pathardi', 'Darbhanga', 'Agra'],
+                    datasets: [{
+                        label: 'Beneficiaries',
+                        data: [185, 130, 125, 120, 95, 90, 65, 60, 30, 25],
+                        backgroundColor: 'rgba(26,147,111,0.7)',
+                        borderColor: '#1A936F',
+                        borderWidth: 2
+                    }]
+                }
+            });
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            drawIndiaMap();
+            createCharts();
+        });
+    </script>
+</body>
+</html>
